@@ -9,9 +9,10 @@ This project currently contains the foundation only. Business features are marke
 - Python 3
 - Text-file handling
 - Terminal menus
+- Tkinter GUI skeleton
 - Standard Python libraries
 
-No database, GUI framework, Flask, Django, networking, APIs, data science, reports, analytics, or search functionality are included.
+No database, Flask, Django, networking, APIs, data science, reports, analytics, or search functionality are included.
 
 ## Architecture
 
@@ -31,6 +32,7 @@ app/
   services/
   storage/
   terminal/
+  gui/
 tests/
 ```
 
@@ -44,6 +46,7 @@ Main files:
 - `app/file_handlers/customer_file_handler.py`
 - `app/services/customer_service.py`
 - `app/terminal/customer_menu.py`
+- `app/gui/customer_panel.py`
 - `tests/test_customer.py`
 
 Responsibilities:
@@ -62,6 +65,7 @@ Main files:
 - `app/file_handlers/service_file_handler.py`
 - `app/services/service_service.py`
 - `app/terminal/service_menu.py`
+- `app/gui/service_panel.py`
 - `tests/test_service.py`
 
 Responsibilities:
@@ -80,6 +84,7 @@ Main files:
 - `app/file_handlers/appointment_file_handler.py`
 - `app/services/appointment_service.py`
 - `app/terminal/appointment_menu.py`
+- `app/gui/appointment_panel.py`
 - `tests/test_appointment.py`
 
 Responsibilities:
@@ -121,6 +126,12 @@ Run the application:
 
 ```bash
 python main.py
+```
+
+Run the GUI skeleton:
+
+```bash
+python main.py --gui
 ```
 
 The app will create simple text files inside the local `data/` folder.
