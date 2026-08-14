@@ -1,6 +1,8 @@
 import unittest
+from unittest.mock import patch
 
 from app.models.appointment import Appointment
+from app.terminal.appointment_menu import AppointmentMenu
 
 
 class AppointmentSkeletonTest(unittest.TestCase):
@@ -18,6 +20,37 @@ class AppointmentSkeletonTest(unittest.TestCase):
         self.assertEqual(appointment.service_id, 20)
 
 
+class AppointmentMenuTest(unittest.TestCase):
+    @patch('builtins.input', side_effect=["0"])
+    @patch('builtins.print')
+    def test_menu_exit(self, mock_print, mock_input) -> None:
+        menu = AppointmentMenu()
+        menu.run()
+        mock_print.assert_any_call("1. Book Appointment")
+
+    @patch('builtins.input', side_effect=["1", "1", "2", "2026-09-01", "10:00", "0"])
+    @patch('builtins.print')
+    @patch('app.services.appointment_service.AppointmentService.create_appointment', return_value=123)
+    def test_menu_book_appointment(self, mock_create, mock_print, mock_input) -> None:
+        menu = AppointmentMenu()
+        menu.run()
+        mock_create.assert_called_once_with(
+            customer_id=1,
+            service_id=2,
+            appointment_date="2026-09-01",
+            start_time="10:00"
+        )
+        mock_print.assert_any_call("Success: Appointment successfully booked (ID: 123).")
+
+    @patch('builtins.input', side_effect=["2", "456", "0"])
+    @patch('builtins.print')
+    @patch('app.services.appointment_service.AppointmentService.cancel_appointment')
+    def test_menu_cancel_appointment(self, mock_cancel, mock_print, mock_input) -> None:
+        menu = AppointmentMenu()
+        menu.run()
+        mock_cancel.assert_called_once_with(456)
+        mock_print.assert_any_call("Success: Appointment ID 456 has been cancelled.")
+
+
 if __name__ == "__main__":
     unittest.main()
-
