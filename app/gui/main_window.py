@@ -17,7 +17,7 @@ class MainWindow:
 
         # Create and setup the main window
         self.root = tk.Tk()
-        self.root.title("Appointment Management System")
+        self.root.title("Hospital Appointment Management System")
         self.root.geometry("1280x720")  # Increased size for more content visibility
         self.root.resizable(True, True)   # Allow resizing
 
@@ -35,7 +35,7 @@ class MainWindow:
         notebook.grid(row=0, column=0, sticky="nsew")
         
         # Add panels to tabs
-        notebook.add(CustomerPanel(notebook), text="Customers")
+        notebook.add(CustomerPanel(notebook), text="Patients")
         notebook.add(ServicePanel(notebook), text="Services")
         notebook.add(AppointmentPanel(notebook), text="Appointments")
 

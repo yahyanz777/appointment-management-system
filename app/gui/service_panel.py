@@ -26,7 +26,7 @@ class ServicePanel(ttk.Frame):
         self._name_entry = ttk.Entry(form)
         self._name_entry.grid(row=0, column=1, padx=5)
 
-        ttk.Label(form, text="Price:").grid(row=0, column=2, sticky="w")
+        ttk.Label(form, text="Consultation Fee:").grid(row=0, column=2, sticky="w")
         self._price_entry = ttk.Entry(form, width=10)
         self._price_entry.grid(row=0, column=3, padx=5)
 
@@ -38,8 +38,10 @@ class ServicePanel(ttk.Frame):
 
         columns = ("id", "name", "price", "duration")
         self._table = ttk.Treeview(self, columns=columns, show="headings", height=8)
-        for col in columns:
-            self._table.heading(col, text=col.capitalize())
+        self._table.heading("id", text="ID")
+        self._table.heading("name", text="Service Name")
+        self._table.heading("price", text="Consultation Fee ($)")
+        self._table.heading("duration", text="Duration (min)")
         self._table.grid(row=2, column=0, columnspan=4, sticky="nsew")
 
         buttons = ttk.Frame(self)
@@ -70,7 +72,7 @@ class ServicePanel(ttk.Frame):
             self._duration_entry.delete(0, tk.END)
             self._refresh_table()
         except ValueError as e:
-            messagebox.showerror("Invalid service", str(e))
+            messagebox.showerror("Invalid entry", str(e))
 
     def _on_delete(self) -> None:
         selected = self._table.selection()

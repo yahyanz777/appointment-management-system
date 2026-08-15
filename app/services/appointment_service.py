@@ -34,7 +34,7 @@ class AppointmentService:
         if self._customer_exists_checker is not None:
             if not self._customer_exists_checker(customer_id):
                 raise ValueError(
-                    f"Customer {customer_id} does not exist"
+                    f"Patient {customer_id} does not exist"
                 )
 
         if self._service_exists_checker is not None:
@@ -113,6 +113,15 @@ class AppointmentService:
             raise ValueError(
                 "start_time must be in HH:MM format"
             )
+
+        # Check that the appointment is in the future
+        try:
+            appt_dt = datetime.strptime(f"{appointment_date} {start_time}", "%Y-%m-%d %H:%M")
+            if appt_dt < datetime.now():
+                raise ValueError("Appointment date and time must be in the future")
+        except ValueError as e:
+            if "must be in the future" in str(e):
+                raise
 
     @staticmethod
     def _is_valid_date(value: str) -> bool:

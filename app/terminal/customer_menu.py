@@ -17,12 +17,12 @@ class CustomerMenu:
     def run(self) -> None:
         """Display and handle customer menu choices."""
         while True:
-            print("\n=== Customer Management ===")
-            print("1. Create Customer")
-            print("2. View All Customers")
-            print("3. View Customer by ID")
-            print("4. Update Customer")
-            print("5. Delete Customer")
+            print("\n=== Patient Management ===")
+            print("1. Register Patient")
+            print("2. View All Patients")
+            print("3. View Patient by ID")
+            print("4. Update Patient")
+            print("5. Delete Patient")
             print("6. Return to Main Menu")
 
             choice = input("Enter choice (1-6): ").strip()
@@ -48,41 +48,41 @@ class CustomerMenu:
         email = input("Enter Email : ").strip()
         try:
             customer_id = self._service.create_customer(name, phone, email)
-            print(f" Success: Created Customer with ID {customer_id}")
+            print(f" Success: Registered Patient with ID {customer_id}")
         except ValueError as e:
             print(f" Error: {e}")
 
     def _list_customers(self) -> None:
         customers = self._service.list_customers()
         if not customers:
-            print("No customers registered yet.")
+            print("No patients registered yet.")
         else:
-            print("\n--- Customer List ---")
+            print("\n--- Patient List ---")
             for c in customers:
                 print(f"ID: {c.id} | Name: {c.name} | Phone: {c.phone} | Email: {c.email}")
 
     def _view_customer(self) -> None:
-        raw_id = input("Enter Customer ID: ").strip()
+        raw_id = input("Enter Patient ID: ").strip()
         if not raw_id.isdigit():
-            print(" Error: Customer ID must be an integer.")
+            print(" Error: Patient ID must be an integer.")
             return
 
         c = self._service.get_customer(int(raw_id))
         if c:
             print(f"\nID    : {c.id}\nName  : {c.name}\nPhone : {c.phone}\nEmail : {c.email}")
         else:
-            print(" Customer not found.")
+            print(" Patient not found.")
 
     def _update_customer(self) -> None:
-        raw_id = input("Enter Customer ID to update: ").strip()
+        raw_id = input("Enter Patient ID to update: ").strip()
         if not raw_id.isdigit():
-            print(" Error: Customer ID must be an integer.")
+            print(" Error: Patient ID must be an integer.")
             return
 
         cid = int(raw_id)
         c = self._service.get_customer(cid)
         if not c:
-            print(" Customer not found.")
+            print(" Patient not found.")
             return
 
         print("(Leave empty to keep existing value)")
@@ -96,20 +96,20 @@ class CustomerMenu:
 
         try:
             if self._service.update_customer(cid, name, phone, email):
-                print(" Customer updated successfully.")
+                print(" Patient details updated successfully.")
             else:
-                print(" Failed to update customer.")
+                print(" Failed to update patient details.")
         except ValueError as e:
             print(f" Error: {e}")
 
     def _delete_customer(self) -> None:
-        raw_id = input("Enter Customer ID to delete: ").strip()
+        raw_id = input("Enter Patient ID to delete: ").strip()
         if not raw_id.isdigit():
-            print(" Error: Customer ID must be an integer.")
+            print(" Error: Patient ID must be an integer.")
             return
 
         cid = int(raw_id)
         if self._service.delete_customer(cid):
-            print(" Customer deleted successfully.")
+            print(" Patient deleted successfully.")
         else:
-            print(" Customer not found.")
+            print(" Patient not found.")

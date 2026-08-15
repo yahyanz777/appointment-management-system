@@ -6,6 +6,14 @@ from app.file_handlers.appointment_file_handler import AppointmentFileHandler
 from app.services.appointment_service import AppointmentService
 from app.storage.file_paths import APPOINTMENTS_FILE
 
+from app.file_handlers.customer_file_handler import CustomerFileHandler
+from app.services.customer_service import CustomerService
+from app.storage.file_paths import CUSTOMERS_FILE
+
+from app.file_handlers.service_file_handler import ServiceFileHandler
+from app.services.service_service import ServiceService
+from app.storage.file_paths import SERVICES_FILE
+
 def check_customer_exists(customer_id: int) -> bool:
     try:
         from app.file_handlers.customer_file_handler import CustomerFileHandler
@@ -39,13 +47,15 @@ class AppointmentPanel(ttk.Frame):
             customer_exists_checker=check_customer_exists,
             service_exists_checker=check_service_exists,
         )
+        self.customer_service = CustomerService(CustomerFileHandler(CUSTOMERS_FILE))
+        self.service_service = ServiceService(ServiceFileHandler(SERVICES_FILE))
         self._build_layout()
         self._refresh_table()
 
     def _build_layout(self) -> None:
         # Title Heading
         heading = ttk.Label(
-            self, text="Appointment Management", font=("Segoe UI", 14, "bold")
+            self, text="Hospital Appointment Management", font=("Segoe UI", 14, "bold")
         )
         heading.grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 12))
 
@@ -53,7 +63,7 @@ class AppointmentPanel(ttk.Frame):
         form_frame = ttk.LabelFrame(self, text="Book Appointment", padding=10)
         form_frame.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 12))
 
-        ttk.Label(form_frame, text="Customer ID:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
+        ttk.Label(form_frame, text="Patient ID:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
         self._customer_entry = ttk.Entry(form_frame, width=15)
         self._customer_entry.grid(row=0, column=1, padx=5, pady=5)
 
@@ -91,15 +101,15 @@ class AppointmentPanel(ttk.Frame):
             height=10,
         )
         self._tree.heading("ID", text="ID")
-        self._tree.heading("CustomerID", text="Customer ID")
-        self._tree.heading("ServiceID", text="Service ID")
+        self._tree.heading("CustomerID", text="Patient")
+        self._tree.heading("ServiceID", text="Service")
         self._tree.heading("Date", text="Date")
         self._tree.heading("Time", text="Time")
         self._tree.heading("Status", text="Status")
 
         self._tree.column("ID", width=60, anchor="center")
-        self._tree.column("CustomerID", width=100, anchor="center")
-        self._tree.column("ServiceID", width=100, anchor="center")
+        self._tree.column("CustomerID", width=180, anchor="w")
+        self._tree.column("ServiceID", width=180, anchor="w")
         self._tree.column("Date", width=120, anchor="center")
         self._tree.column("Time", width=100, anchor="center")
         self._tree.column("Status", width=120, anchor="center")
@@ -124,15 +134,27 @@ class AppointmentPanel(ttk.Frame):
         for item in self._tree.get_children():
             self._tree.delete(item)
 
+        try:
+            patients = {p.id: p.name for p in self.customer_service.list_customers()}
+        except Exception:
+            patients = {}
+
+        try:
+            services = {s.id: s.name for s in self.service_service.list_services()}
+        except Exception:
+            services = {}
+
         for appt in self.appointment_service._file_handler.list_all():
+            patient_name = patients.get(appt.customer_id, f"Patient {appt.customer_id}")
+            service_name = services.get(appt.service_id, f"Service {appt.service_id}")
             self._tree.insert(
                 "",
                 "end",
                 iid=str(appt.id),
                 values=(
                     appt.id,
-                    appt.customer_id,
-                    appt.service_id,
+                    patient_name,
+                    service_name,
                     appt.appointment_date,
                     appt.start_time,
                     appt.status,

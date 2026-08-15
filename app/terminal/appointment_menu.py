@@ -2,6 +2,14 @@ from app.file_handlers.appointment_file_handler import AppointmentFileHandler
 from app.services.appointment_service import AppointmentService
 from app.storage.file_paths import APPOINTMENTS_FILE
 
+from app.file_handlers.customer_file_handler import CustomerFileHandler
+from app.services.customer_service import CustomerService
+from app.storage.file_paths import CUSTOMERS_FILE
+
+from app.file_handlers.service_file_handler import ServiceFileHandler
+from app.services.service_service import ServiceService
+from app.storage.file_paths import SERVICES_FILE
+
 
 def check_customer_exists(customer_id: int) -> bool:
     try:
@@ -64,13 +72,13 @@ class AppointmentMenu:
     def _book_appointment(self) -> None:
         print("\n--- Book Appointment ---")
         try:
-            customer_id_str = input("Enter Customer ID: ").strip()
+            customer_id_str = input("Enter Patient ID: ").strip()
             service_id_str = input("Enter Service ID: ").strip()
             date = input("Enter Date (YYYY-MM-DD): ").strip()
             time = input("Enter Start Time (HH:MM): ").strip()
 
             if not customer_id_str or not service_id_str:
-                print("Error: Customer ID and Service ID cannot be empty.")
+                print("Error: Patient ID and Service ID cannot be empty.")
                 return
 
             customer_id = int(customer_id_str)
@@ -112,13 +120,31 @@ class AppointmentMenu:
                 print("No appointments found.")
                 return
 
+            try:
+                customer_service = CustomerService(CustomerFileHandler(CUSTOMERS_FILE))
+                patients = {p.id: p.name for p in customer_service.list_customers()}
+            except Exception:
+                patients = {}
+
+            try:
+                service_service = ServiceService(ServiceFileHandler(SERVICES_FILE))
+                services = {s.id: s.name for s in service_service.list_services()}
+            except Exception:
+                services = {}
+
             print(
-                f"{'ID':<5} | {'Cust ID':<7} | {'Svc ID':<6} | {'Date':<10} | {'Time':<5} | {'Status':<10}"
+                f"{'ID':<5} | {'Patient':<20} | {'Service':<20} | {'Date':<10} | {'Time':<5} | {'Status':<10}"
             )
-            print("-" * 55)
+            print("-" * 79)
             for appt in appointments:
+                patient_name = patients.get(appt.customer_id, f"Patient {appt.customer_id}")
+                service_name = services.get(appt.service_id, f"Service {appt.service_id}")
+                if len(patient_name) > 20:
+                    patient_name = patient_name[:17] + "..."
+                if len(service_name) > 20:
+                    service_name = service_name[:17] + "..."
                 print(
-                    f"{appt.id:<5} | {appt.customer_id:<7} | {appt.service_id:<6} | {appt.appointment_date:<10} | {appt.start_time:<5} | {appt.status:<10}"
+                    f"{appt.id:<5} | {patient_name:<20} | {service_name:<20} | {appt.appointment_date:<10} | {appt.start_time:<5} | {appt.status:<10}"
                 )
         except Exception as e:
             print(f"Error listing appointments: {e}")
