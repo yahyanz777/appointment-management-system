@@ -90,6 +90,37 @@ class AppointmentService:
     def cancel_appointment(self, appointment_id: int) -> None:
         self._file_handler.cancel(appointment_id)
 
+    def update_appointment(
+        self,
+        appointment_id: int,
+        appointment_date: str = None,
+        start_time: str = None,
+    ) -> None:
+        appointment = self._file_handler.get_by_id(appointment_id)
+        if not appointment:
+            raise ValueError(f"Appointment {appointment_id} does not exist")
+
+        if appointment.status.lower() == "cancelled":
+            raise ValueError("Cannot update a cancelled appointment")
+
+        new_date = appointment_date if appointment_date is not None else appointment.appointment_date
+        new_time = start_time if start_time is not None else appointment.start_time
+
+        self._validate_appointment_input(
+            appointment.customer_id,
+            appointment.service_id,
+            new_date,
+            new_time,
+        )
+        
+        if (new_date != appointment.appointment_date or new_time != appointment.start_time):
+            if not self.is_time_slot_available(new_date, new_time, appointment.service_id):
+                raise ValueError("Selected time slot is not available")
+
+        appointment.appointment_date = new_date
+        appointment.start_time = new_time
+        self._file_handler.update(appointment)
+
     def _validate_appointment_input(
         self,
         customer_id: int,

@@ -126,6 +126,7 @@ class AppointmentPanel(ttk.Frame):
         actions_frame = ttk.Frame(self)
         actions_frame.grid(row=3, column=0, columnspan=2, sticky="w", pady=(10, 0))
 
+        ttk.Button(actions_frame, text="Update Selected", command=self._update_appointment).pack(side="left", padx=5)
         ttk.Button(actions_frame, text="Cancel Selected", command=self._cancel_appointment).pack(side="left", padx=5)
         ttk.Button(actions_frame, text="Refresh List", command=self._refresh_table).pack(side="left", padx=5)
 
@@ -187,6 +188,45 @@ class AppointmentPanel(ttk.Frame):
             messagebox.showerror("Error", str(e))
         except Exception as e:
             messagebox.showerror("Unexpected Error", str(e))
+
+    def _update_appointment(self) -> None:
+        selected_items = self._tree.selection()
+        if not selected_items:
+            messagebox.showwarning("Selection Required", "Please select an appointment to update.")
+            return
+
+        appt_id = int(selected_items[0])
+        
+        top = tk.Toplevel(self)
+        top.title("Update Appointment")
+        top.geometry("300x150")
+        
+        ttk.Label(top, text="New Date (YYYY-MM-DD)\nLeave blank to keep current:").pack(pady=2)
+        date_entry = ttk.Entry(top)
+        date_entry.pack(pady=2)
+        
+        ttk.Label(top, text="New Time (HH:MM)\nLeave blank to keep current:").pack(pady=2)
+        time_entry = ttk.Entry(top)
+        time_entry.pack(pady=2)
+        
+        def save():
+            new_date = date_entry.get().strip()
+            new_time = time_entry.get().strip()
+            try:
+                self.appointment_service.update_appointment(
+                    appt_id, 
+                    appointment_date=new_date if new_date else None, 
+                    start_time=new_time if new_time else None
+                )
+                messagebox.showinfo("Success", f"Appointment ID {appt_id} updated.")
+                self._refresh_table()
+                top.destroy()
+            except ValueError as e:
+                messagebox.showerror("Error", str(e))
+            except Exception as e:
+                messagebox.showerror("Unexpected Error", str(e))
+                
+        ttk.Button(top, text="Save", command=save).pack(pady=10)
 
     def _cancel_appointment(self) -> None:
         selected_items = self._tree.selection()

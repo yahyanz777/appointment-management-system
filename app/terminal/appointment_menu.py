@@ -54,6 +54,7 @@ class AppointmentMenu:
             print("1. Book Appointment")
             print("2. Cancel Appointment")
             print("3. List All Appointments")
+            print("4. Update Appointment")
             print("0. Back to Main Menu")
 
             choice = input("Choose an option: ").strip()
@@ -64,6 +65,8 @@ class AppointmentMenu:
                 self._cancel_appointment()
             elif choice == "3":
                 self._list_appointments()
+            elif choice == "4":
+                self._update_appointment()
             elif choice == "0":
                 break
             else:
@@ -107,6 +110,29 @@ class AppointmentMenu:
             appt_id = int(appt_id_str)
             self.appointment_service.cancel_appointment(appt_id)
             print(f"Success: Appointment ID {appt_id} has been cancelled.")
+        except ValueError as e:
+            print(f"Error: {e}")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+
+    def _update_appointment(self) -> None:
+        print("\n--- Update Appointment ---")
+        try:
+            appt_id_str = input("Enter Appointment ID: ").strip()
+            if not appt_id_str:
+                print("Error: Appointment ID cannot be empty.")
+                return
+            
+            appt_id = int(appt_id_str)
+            date = input("Enter New Date (YYYY-MM-DD) or leave blank to keep current: ").strip()
+            time = input("Enter New Start Time (HH:MM) or leave blank to keep current: ").strip()
+            
+            self.appointment_service.update_appointment(
+                appt_id, 
+                appointment_date=date if date else None,
+                start_time=time if time else None
+            )
+            print(f"Success: Appointment ID {appt_id} has been updated.")
         except ValueError as e:
             print(f"Error: {e}")
         except Exception as e:
