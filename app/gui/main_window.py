@@ -20,6 +20,11 @@ class MainWindow:
         self.root.title("Appointment Management System")
         self.root.geometry("1280x720")  # Increased size for more content visibility
         self.root.resizable(True, True)   # Allow resizing
+
+        # Configure global styles for High DPI scaling
+        style = ttk.Style(self.root)
+        # Increase Treeview row height to prevent text clipping
+        style.configure("Treeview", rowheight=28)
         
         # Configure window grid expansion
         self.root.columnconfigure(0, weight=1)
