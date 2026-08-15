@@ -1,193 +1,96 @@
-# Appointment Management System
+# Hospital Appointment Management System
 
-A beginner-friendly Python project skeleton for a 3-person team. The application will eventually manage customers, services, and appointments while preventing scheduling conflicts.
+A robust, lightweight Python application designed to streamline appointment scheduling, patient record management, and healthcare service coordination. The system is equipped with both a sleek graphical user interface (GUI) built with Tkinter and an intuitive Terminal-based command-line interface.
 
-This project currently contains the foundation only. Business features are marked with TODO comments and should be implemented by the assigned module owner.
+It features comprehensive validation rules, conflict detection, and seamless mapping of patients and services.
 
-## Technologies
+---
 
-- Python 3
-- Text-file handling
-- Terminal menus
-- Tkinter GUI skeleton
-- Standard Python libraries
+## Key Features
 
-No database, Flask, Django, networking, APIs, data science, reports, analytics, or search functionality are included.
+* **Patient Management**:
+  * Register, update, delete, and view patients.
+  * Ensures formatting validation for key patient fields (name, phone, and email).
+* **Service Management**:
+  * Manage clinical and hospital services (e.g., General Consultation, Dentistry, cardiology).
+  * Configure service details including consultation fees and session durations.
+* **Appointment Booking**:
+  * Book and cancel medical appointments.
+  * Automatically resolves patient and service IDs into corresponding names in listings for enhanced readability.
+  * **Conflict Prevention**: Ensures time slots are not double-booked for the same service.
+  * **Future-Date Validation**: Prevents booking appointments in the past relative to the current local system datetime.
+
+---
 
 ## Architecture
 
-The project is split into three independent feature modules:
-
-- Customer Management
-- Service Management
-- Appointment Management
-
-Each module owns its model, file handler, service, terminal menu, and tests. Modules should communicate through stable IDs and public service methods, not by importing each other's internal implementation details.
+The system utilizes a modular layer-based architecture implementing a clean separation of concerns:
 
 ```text
-main.py
+main.py                   # Application Entrypoint
 app/
-  models/
-  file_handlers/
-  services/
-  storage/
-  terminal/
-  gui/
-tests/
+  models/                 # Data representations (Patient, Service, Appointment)
+  file_handlers/          # Data persistence layer (CRUD operations on local text files)
+  services/               # Business logic and validation layer
+  storage/                # Storage paths and environment setup
+  terminal/               # Console-based interactive user interface
+  gui/                    # Tkinter-based graphical user interface
+tests/                    # Automated testing suite
 ```
 
-## Team Responsibilities
+---
 
-### Developer 1: Customer Management
+## Installation & Run
 
-Main files:
+### 1. Prerequisites
+Ensure you have **Python 3.10+** installed on your system.
 
-- `app/models/customer.py`
-- `app/file_handlers/customer_file_handler.py`
-- `app/services/customer_service.py`
-- `app/terminal/customer_menu.py`
-- `app/gui/customer_panel.py`
-- `tests/test_customer.py`
-
-Responsibilities:
-
-- Creating customers
-- Updating customers
-- Deleting customers
-- Viewing customer information
-- Customer validation
-
-### Developer 2: Service Management
-
-Main files:
-
-- `app/models/service.py`
-- `app/file_handlers/service_file_handler.py`
-- `app/services/service_service.py`
-- `app/terminal/service_menu.py`
-- `app/gui/service_panel.py`
-- `tests/test_service.py`
-
-Responsibilities:
-
-- Creating services
-- Updating services
-- Deleting services
-- Viewing services
-- Managing service price and duration
-
-### Developer 3: Appointment Management
-
-Main files:
-
-- `app/models/appointment.py`
-- `app/file_handlers/appointment_file_handler.py`
-- `app/services/appointment_service.py`
-- `app/terminal/appointment_menu.py`
-- `app/gui/appointment_panel.py`
-- `tests/test_appointment.py`
-
-Responsibilities:
-
-- Creating appointments
-- Cancelling appointments
-- Rescheduling appointments
-- Checking appointment conflicts
-- Checking whether a time slot is available
-
-## Shared Files
-
-These files should be changed carefully because all developers depend on them:
-
-- `main.py`
-- `app/storage/file_paths.py`
-- `app/terminal/main_menu.py`
-- `README.md`
-- Shared configuration files such as `.gitignore` and `requirements.txt`
-
-Discuss shared-file changes before opening a pull request.
-
-## Install and Run
+### 2. Setup Virtual Environment
 
 Create and activate a virtual environment:
 
 ```bash
+# Windows
 python -m venv .venv
 .venv\Scripts\activate
+
+# macOS / Linux
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-Install dependencies:
+### 3. Run the Application
+
+The application can be executed in either of two modes:
+
+* **Graphical User Interface (GUI) Mode**:
+  ```bash
+  python main.py --gui
+  ```
+
+* **Interactive Terminal Mode**:
+  ```bash
+  python main.py
+  ```
+
+*Upon execution, the system initializes data persistence files automatically under the local `/data` directory.*
+
+---
+
+## Running the Tests
+
+To run the automated unittest suite and verify validation logic:
 
 ```bash
-pip install -r requirements.txt
+python -m unittest discover -s tests
 ```
 
-Run the application:
+---
 
-```bash
-python main.py
-```
+## Persistent Storage Plan
 
-Run the GUI skeleton:
+The persistence layer stores structured data in plain text/CSV files inside the local `/data` directory:
 
-```bash
-python main.py --gui
-```
-
-The app will create simple text files inside the local `data/` folder.
-
-## Run Tests
-
-```bash
-python -m unittest discover
-```
-
-## Git Workflow
-
-Use `main` as the stable branch. Each developer works on a feature branch and opens a pull request into `main`.
-
-Suggested branches:
-
-- `developer-1-customer`
-- `developer-2-service`
-- `developer-3-appointment`
-
-Example:
-
-```bash
-git checkout main
-git pull origin main
-git checkout -b developer-1-customer
-git add .
-git commit -m "Add customer management skeleton work"
-git push -u origin developer-1-customer
-```
-
-Before opening a pull request:
-
-```bash
-git checkout main
-git pull origin main
-git checkout developer-1-customer
-git merge main
-python -m unittest discover
-```
-
-## Module Communication Rules
-
-- Use IDs such as `customer_id` and `service_id` between modules.
-- Do not import another developer's file handler implementation directly.
-- Keep cross-module behavior in service-layer public methods.
-- Coordinate before changing shared file paths or the main terminal menu.
-
-For example, appointment code may store `customer_id` and `service_id`, but it should not depend on how customers or services are created internally.
-
-## File Storage Plan
-
-The project uses simple text files for beginner-friendly file handling:
-
-- `data/customers.txt`
-- `data/services.txt`
-- `data/appointments.txt`
-
-These files are created automatically when the program starts and are ignored by Git.
+* `data/customers.txt`: Pipelines-delimited records of patients (`id|name|phone|email`).
+* `data/services.txt`: Pipelines-delimited records of medical services (`id|name|fee|duration`).
+* `data/appointments.txt`: CSV-formatted records of appointments (`id,patient_id,service_id,date,time,status`).
