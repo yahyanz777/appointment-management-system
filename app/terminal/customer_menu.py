@@ -102,14 +102,14 @@ class CustomerMenu:
         except ValueError as e:
             print(f" Error: {e}")
 
-        def _delete_customer(self) -> None:
-            raw_id = input("Enter Customer ID to delete: ").strip()
-            if not raw_id.isdigit():
-                print(" Error: Customer ID must be an integer.")
-                return
+    def _delete_customer(self) -> None:
+        raw_id = input("Enter Customer ID to delete: ").strip()
+        if not raw_id.isdigit():
+            print(" Error: Customer ID must be an integer.")
+            return
 
-            cid = int(raw_id)
-            if self._service.delete_customer(cid):
-                print(" Customer deleted successfully.")
-            else:
-                print(" Customer not found.")
+        cid = int(raw_id)
+        if self._service.delete_customer(cid):
+            print(" Customer deleted successfully.")
+        else:
+            print(" Customer not found.")

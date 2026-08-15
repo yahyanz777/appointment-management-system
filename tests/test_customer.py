@@ -27,7 +27,7 @@ class CustomerSkeletonTest(unittest.TestCase):
 class CustomerModelTest(unittest.TestCase):
     """Tests for Customer dataclass serialization and formatting."""
 
-    def test_to_and_from_file_line() -> None:
+    def test_to_and_from_file_line(self) -> None:
         customer = Customer(
             id=101, name="Ahmed", phone="01012345678", email="ahmed@example.com"
         )
@@ -42,7 +42,7 @@ class CustomerModelTest(unittest.TestCase):
             self.assertEqual(parsed.phone, "01012345678")
             self.assertEqual(parsed.email, "ahmed@example.com")
 
-    def test_to_dict() -> None:
+    def test_to_dict(self) -> None:
         customer = Customer(
             id=102, name="Sara", phone="01122334455", email="sara@example.com"
         )
@@ -69,7 +69,7 @@ class CustomerFileHandlerTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
 
-    def test_add_auto_increments_id() -> None:
+    def test_add_auto_increments_id(self) -> None:
         c1 = Customer(id=None, name="Ali", phone="01000000000", email="ali@example.com")
         c2 = Customer(id=None, name="Omar", phone="01500000000", email="omar@example.com")
 
@@ -79,7 +79,7 @@ class CustomerFileHandlerTest(unittest.TestCase):
         self.assertEqual(id1, 1)
         self.assertEqual(id2, 2)
 
-    def test_get_by_id_and_list_all() -> None:
+    def test_get_by_id_and_list_all(self) -> None:
         c = Customer(id=None, name="Mona", phone="01200000000", email="mona@example.com")
         self.file_handler.add(c)
 
@@ -91,7 +91,7 @@ class CustomerFileHandlerTest(unittest.TestCase):
         all_customers = self.file_handler.list_all()
         self.assertEqual(len(all_customers), 1)
 
-    def test_update_and_delete() -> None:
+    def test_update_and_delete(self) -> None:
         c = Customer(id=None, name="Original", phone="01011111111", email="orig@example.com")
         cid = self.file_handler.add(c)
 
@@ -121,7 +121,7 @@ class CustomerServiceTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
 
-    def test_create_customer_success() -> None:
+    def test_create_customer_success(self) -> None:
         cid = self.service.create_customer("Hassan", "01022223333", "hassan@example.com")
         self.assertEqual(cid, 1)
 
@@ -130,19 +130,19 @@ class CustomerServiceTest(unittest.TestCase):
         if customer:
             self.assertEqual(customer.name, "Hassan")
 
-    def test_validation_empty_name_raises_value_error() -> None:
+    def test_validation_empty_name_raises_value_error(self) -> None:
         with self.assertRaises(ValueError):
             self.service.create_customer("", "01000000000", "test@example.com")
 
-    def test_validation_empty_phone_raises_value_error() -> None:
+    def test_validation_empty_phone_raises_value_error(self) -> None:
         with self.assertRaises(ValueError):
             self.service.create_customer("Test User", "   ", "test@example.com")
 
-    def test_validation_invalid_email_raises_value_error() -> None:
+    def test_validation_invalid_email_raises_value_error(self) -> None:
         with self.assertRaises(ValueError):
             self.service.create_customer("Test User", "01000000000", "invalid_email")
 
-    def test_update_customer_service() -> None:
+    def test_update_customer_service(self) -> None:
         cid = self.service.create_customer("Kareem", "01033334444", "kareem@example.com")
         success = self.service.update_customer(cid, name="Kareem Adel")
         self.assertTrue(success)
@@ -152,7 +152,7 @@ class CustomerServiceTest(unittest.TestCase):
         if updated:
             self.assertEqual(updated.name, "Kareem Adel")
 
-    def test_delete_customer_service() -> None:
+    def test_delete_customer_service(self) -> None:
         cid = self.service.create_customer("Mahmoud", "01044445555", "mahmoud@example.com")
         deleted = self.service.delete_customer(cid)
         self.assertTrue(deleted)
