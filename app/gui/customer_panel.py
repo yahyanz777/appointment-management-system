@@ -7,7 +7,7 @@ from app.services.customer_service import CustomerService
 
 
 class CustomerPanel(ttk.Frame):
-    """GUI panel for customer management."""
+    """GUI panel for patient management."""
 
     def __init__(
         self, parent: tk.Widget, service: CustomerService | None = None
@@ -27,12 +27,12 @@ class CustomerPanel(ttk.Frame):
     def _build_layout(self) -> None:
         # Title Heading
         heading = ttk.Label(
-            self, text="Customer Management", font=("Segoe UI", 14, "bold")
+            self, text="Patient Management", font=("Segoe UI", 14, "bold")
         )
         heading.grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 12))
 
         # Input Form Section
-        form_frame = ttk.LabelFrame(self, text="Customer Details", padding=10)
+        form_frame = ttk.LabelFrame(self, text="Patient Details", padding=10)
         form_frame.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 12))
 
         ttk.Label(form_frame, text="Name:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
@@ -133,7 +133,7 @@ class CustomerPanel(ttk.Frame):
 
         try:
             new_id = self._service.create_customer(name, phone, email)
-            messagebox.showinfo("Success", f"Customer created with ID: {new_id}")
+            messagebox.showinfo("Success", f"Patient registered with ID: {new_id}")
             self._clear_form()
             self._refresh_customer_list()
         except ValueError as e:
@@ -142,7 +142,7 @@ class CustomerPanel(ttk.Frame):
     def _update_customer(self) -> None:
         if self._selected_customer_id is None:
             messagebox.showwarning(
-                "Selection Required", "Please select a customer from the list to update."
+                "Selection Required", "Please select a patient from the list to update."
             )
             return
 
@@ -154,32 +154,32 @@ class CustomerPanel(ttk.Frame):
             if self._service.update_customer(
                 self._selected_customer_id, name, phone, email
             ):
-                messagebox.showinfo("Success", "Customer updated successfully.")
+                messagebox.showinfo("Success", "Patient details updated successfully.")
                 self._clear_form()
                 self._refresh_customer_list()
             else:
-                messagebox.showerror("Error", "Customer not found.")
+                messagebox.showerror("Error", "Patient not found.")
         except ValueError as e:
             messagebox.showerror("Validation Error", str(e))
 
     def _delete_customer(self) -> None:
         if self._selected_customer_id is None:
             messagebox.showwarning(
-                "Selection Required", "Please select a customer from the list to delete."
+                "Selection Required", "Please select a patient from the list to delete."
             )
             return
 
         confirm = messagebox.askyesno(
             "Confirm Delete",
-            f"Are you sure you want to delete customer ID {self._selected_customer_id}?",
+            f"Are you sure you want to delete patient ID {self._selected_customer_id}?",
         )
         if confirm:
             if self._service.delete_customer(self._selected_customer_id):
-                messagebox.showinfo("Success", "Customer deleted successfully.")
+                messagebox.showinfo("Success", "Patient deleted successfully.")
                 self._clear_form()
                 self._refresh_customer_list()
             else:
-                messagebox.showerror("Error", "Failed to delete customer.")
+                messagebox.showerror("Error", "Failed to delete patient.")
 
     def _clear_form(self) -> None:
         self._selected_customer_id = None

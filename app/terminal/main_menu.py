@@ -12,8 +12,8 @@ class MainMenu:
         ensure_data_files_exist()
 
         while True:
-            print("\nAppointment Management System")
-            print("1. Customer Management")
+            print("\nHospital Appointment Management System")
+            print("1. Patient Management")
             print("2. Service Management")
             print("3. Appointment Management")
             print("0. Exit")

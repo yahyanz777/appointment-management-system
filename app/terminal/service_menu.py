@@ -13,11 +13,11 @@ class ServiceMenu:
         """Display the service menu until the user chooses to go back."""
         while True:
             print("\nService Management")
-            print("1. Add service")
-            print("2. View all services")
-            print("3. Update service")
-            print("4. Delete service")
-            print("0. Back to main menu")
+            print("1. Add Service")
+            print("2. View All Services")
+            print("3. Update Service")
+            print("4. Delete Service")
+            print("0. Back to Main Menu")
 
             choice = input("Choose an option: ").strip()
 
@@ -36,34 +36,34 @@ class ServiceMenu:
 
     def _add_service(self) -> None:
         name = input("Service name: ").strip()
-        price = input("Price: ").strip()
+        price = input("Consultation Fee: ").strip()
         duration = input("Duration (minutes): ").strip()
 
         try:
             new_id = self._service.create_service(name, price, duration)
-            print(f"Created service #{new_id}.")
+            print(f"Created Service #{new_id}.")
         except ValueError as e:
-            print(f"Could not create service: {e}")
+            print(f"Could not create Service: {e}")
 
     def _view_services(self) -> None:
         services = self._service.list_services()
         if not services:
-            print("No services yet.")
+            print("No Services yet.")
             return
 
         for s in services:
-            print(f"[{s.id}] {s.name} - ${s.price:.2f} - {s.duration_minutes} min")
+            print(f"[{s.id}] {s.name} - Fee: ${s.price:.2f} - {s.duration_minutes} min")
 
     def _update_service(self) -> None:
-        raw_id = input("Service id to update: ").strip()
+        raw_id = input("Service ID to update: ").strip()
         try:
             service_id = int(raw_id)
         except ValueError:
-            print("Service id must be a number.")
+            print("Service ID must be a number.")
             return
 
         name = input("New name (leave blank to keep current): ").strip()
-        price = input("New price (leave blank to keep current): ").strip()
+        price = input("New Consultation Fee (leave blank to keep current): ").strip()
         duration = input("New duration in minutes (leave blank to keep current): ").strip()
 
         try:
@@ -75,18 +75,18 @@ class ServiceMenu:
             )
             print("Service updated.")
         except ValueError as e:
-            print(f"Could not update service: {e}")
+            print(f"Could not update Service: {e}")
 
     def _delete_service(self) -> None:
-        raw_id = input("Service id to delete: ").strip()
+        raw_id = input("Service ID to delete: ").strip()
         try:
             service_id = int(raw_id)
         except ValueError:
-            print("Service id must be a number.")
+            print("Service ID must be a number.")
             return
 
         try:
             self._service.delete_service(service_id)
             print("Service deleted.")
         except ValueError as e:
-            print(f"Could not delete service: {e}")
+            print(f"Could not delete Service: {e}")

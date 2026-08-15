@@ -52,5 +52,43 @@ class AppointmentMenuTest(unittest.TestCase):
         mock_print.assert_any_call("Success: Appointment ID 456 has been cancelled.")
 
 
+from datetime import datetime, timedelta
+from app.services.appointment_service import AppointmentService
+
+class AppointmentServiceValidationTest(unittest.TestCase):
+    def setUp(self):
+        from unittest.mock import MagicMock
+        self.mock_file_handler = MagicMock()
+        self.service = AppointmentService(
+            self.mock_file_handler,
+            customer_exists_checker=lambda x: True,
+            service_exists_checker=lambda x: True,
+        )
+
+    def test_create_appointment_in_past_raises_value_error(self) -> None:
+        past_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+        with self.assertRaises(ValueError) as context:
+            self.service.create_appointment(
+                customer_id=1,
+                service_id=1,
+                appointment_date=past_date,
+                start_time="10:00"
+            )
+        self.assertIn("must be in the future", str(context.exception))
+
+    def test_create_appointment_in_future_succeeds(self) -> None:
+        future_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+        self.mock_file_handler.list_all.return_value = []
+        self.mock_file_handler.add.return_value = 999
+        
+        appt_id = self.service.create_appointment(
+            customer_id=1,
+            service_id=1,
+            appointment_date=future_date,
+            start_time="10:00"
+        )
+        self.assertEqual(appt_id, 999)
+
+
 if __name__ == "__main__":
     unittest.main()
